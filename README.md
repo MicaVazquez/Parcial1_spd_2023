@@ -4,6 +4,24 @@
 <h2> Descripción</h2>
 <p>EL proyecto es un modelo de montacargas que recibe ordenes de subir, bajar o pausar
 desde diferentes pisos y muestre el estado actual del montacargas en el display 7 segmentos.</p>
+<h2> Funcionamiento</h2>
+<p>Se definen los pines utilizados para los pulsadores, los LEDs y los segmentos del display mediante #define. Por ejemplo, PULSADOR_BAJAR se define como el pin 13.
+
+Se declaran variables para almacenar los estados de los pulsadores y los estados anteriores de los pulsadores. También se declara la variable estadoDelLed para almacenar el estado del LED rojo y la variable nivel para almacenar el nivel del montacargas.
+
+Se declaran dos arreglos: elementos[] para almacenar los pines de los segmentos del display de siete segmentos y pulsadores[] para almacenar los pines de los pulsadores.
+
+En la función setup(), se configuran los pines como entrada o salida utilizando la función pinMode(). Los pines de los segmentos del display se configuran como salidas, mientras que los pines de los pulsadores se configuran como entradas. Además, se inicia la comunicación serial a una velocidad de 9600 baudios y se llama a la función visualizacion() para mostrar el número 0 en el display.
+
+En la función loop(), se realiza el control del montacargas y la detección de los pulsadores.
+
+Primero, se lee el estado del pulsador de subir (PULSADOR_SUBIR) y se compara con el estado anterior (estadoAnteriorBotonSubir). Si hay un cambio en el estado del pulsador y el flag de pausa (flagPausa) es falso, se llama a la función subirMontacargas().
+
+A continuación, se realiza lo mismo para el pulsador de bajar (PULSADOR_BAJAR) y se llama a la función bajarMontacargas() si hay un cambio de estado.
+
+Luego, se lee el estado del pulsador de pausar (PULSADOR_PAUSAR) y se compara con el estado anterior (estadoAnteriorBotonPausar). Si el pulsador está presionado y el estado anterior está en bajo, se cambia el estado del LED verde (LED_VERDE) y se llama a la función pausarMontacargas() con el estado del LED como argumento.
+
+Finalmente, se actualizan los estados anteriores de los pulsadores</p><br>
 <h2> Funciones </h2>
 <ul>
 <li>La función display() se utiliza para controlar los segmentos del display de siete segmentos. Recibe como argumentos los valores de los segmentos (0 o 1) y utiliza la función digitalWrite() para establecer los valores correspondientes en los pines de los segmentos.</li>
