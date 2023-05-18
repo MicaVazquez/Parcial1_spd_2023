@@ -34,5 +34,6 @@ Finalmente, se actualizan los estados anteriores de los pulsadores</p><br>
 <img src="./Img/LedRojo.png" ><br>
   <p>Así se ve cuando se encuentra pausado</p>
 </ul>
-<h2> Link al proyecto</h2>
+## Link al proyecto 
+[Parcial 1 SPD](https://www.tinkercad.com/things/gzPuxQ7PXj4)
 
