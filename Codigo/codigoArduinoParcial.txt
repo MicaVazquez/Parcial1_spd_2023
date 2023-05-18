@@ -1,12 +1,5 @@
 // C++ code
 //
-#define A 9
-#define B 10
-#define F 8
-#define G 7
-#define E 6
-#define D 5
-#define C 4
 #define PULSADOR_BAJAR 13
 #define PULSADOR_PAUSAR 12
 #define PULSADOR_SUBIR 11
@@ -16,13 +9,13 @@
 #define FALSE 0
 
 int estadoBotonSubir;
-int estadoAnteriorBotonSubir = 0;
+int estadoAnteriorBotonSubir = 0; //btn_subir
 
 int estadoBotonBajar;
-int estadoAnteriorBotonBajar = 0;
+int estadoAnteriorBotonBajar = 0;//btn_bajar
 
 int estadoBotonPausar = 0;
-int estadoAnteriorBotonPausar = 0;
+int estadoAnteriorBotonPausar = 0;//btn_pausar
 int estadoDelLed = 0;
 
 
@@ -35,73 +28,40 @@ void setup()
 {
   for(int i= 0;i<9;i++)
   {
-    pinMode(elementos[i], OUTPUT);  
+    pinMode(elementos[i], OUTPUT);  //lista de los pines de los leds y los segmentos
   }
   
   for(int i= 0;i<4;i++)
   {
-    pinMode(pulsadores[i],INPUT);  
+    pinMode(pulsadores[i],INPUT);  //lista de los pulsadores
   }
   Serial.begin(9600);
+  visualizacion(0); 
 }
 
 void loop()
 {
   //BOTON SUBIR
-  estadoBotonSubir = digitalRead(PULSADOR_SUBIR);
+  estadoBotonSubir = digitalRead(PULSADOR_SUBIR);//leo el estado del boton
   
-  if (estadoBotonSubir!=estadoAnteriorBotonSubir)
+  if (estadoBotonSubir!=estadoAnteriorBotonSubir)//comparar el estado actual con el estado anterior-> cambio en el estado del botón
   {
   	if (estadoBotonSubir == HIGH && flagPausa == FALSE)
   	{
-         nivel++;
-             
-        if (nivel > 9)
-        {
-          nivel = 9;
-          visualizacion(nivel);
-          Serial.println("Solo se puede subir hasta 9");
-        }
-        else
-        {
-           visualizacion(nivel);
-           digitalWrite(LED_VERDE, HIGH); 
-           delay(3000);
-           Serial.print("Montacargas en el piso:");
-           Serial.println(nivel); 
-           display(0,0,0,0,0,0,0);
-           digitalWrite(LED_VERDE, LOW);
-        }
+      subirMontacargas();
  	}
-    
     estadoAnteriorBotonSubir = estadoBotonSubir;
   }
   
   //BOTON BAJAR
-  estadoBotonBajar = digitalRead(PULSADOR_BAJAR);
+  estadoBotonBajar = digitalRead(PULSADOR_BAJAR);//leo el estado del boton
   
   if (estadoBotonBajar!=estadoAnteriorBotonBajar)
   {
   
-  	if (estadoBotonBajar == HIGH && flagPausa == FALSE)
+  	if (estadoBotonBajar == HIGH && flagPausa == FALSE)//solo si esta presionado y la bandera esta en false
   	{
-         nivel--;
-        if (nivel < 0)
-        {
-          nivel = 0;
-          visualizacion(nivel);
-          Serial.println("Solo se puede bajar hasta 0");
-        }
-        else
-        {
-           visualizacion(nivel);
-           digitalWrite(LED_VERDE, HIGH); 
-           delay(3000);
-           Serial.print("Montacargas en el piso:");
-           Serial.println(nivel); 
-           display(0,0,0,0,0,0,0);
-           digitalWrite(LED_VERDE, LOW);
-        }
+      bajarMontacargas();
  	}
     
     estadoAnteriorBotonBajar= estadoBotonBajar;
@@ -112,30 +72,20 @@ void loop()
   estadoBotonPausar = digitalRead(PULSADOR_PAUSAR);
     
   	if ((estadoBotonPausar == HIGH) &&(estadoAnteriorBotonPausar == LOW))
-  	{
-        estadoDelLed = 1 - estadoDelLed;
+  	{                                   // indica en que estado debe estar el led
+        estadoDelLed = 1 - estadoDelLed;//la primera vez va a dar 1 y en la siguiente 0 
         delay(10); 
+      
+        pausarMontacargas(estadoDelLed);
+        
  	}
-    if(estadoDelLed == 1)
-    {
-      digitalWrite(LED_ROJO,HIGH);
-      Serial.println("Montacargas en pausa...");
-      flagPausa = TRUE;
-    }
-    else
-    {
-      digitalWrite(LED_ROJO,LOW);
-      Serial.println("Montacargas activo de nuevo...");
-      flagPausa = FALSE;
-    }
+    
     estadoAnteriorBotonPausar= estadoBotonPausar;
-  
-  
 } 
 
-void display(int a,int b,int c,int d,int e,int f,int g)
+void display(int a,int b,int c,int d,int e,int f,int g)//recibe el estado de cada segmento
 {
-  digitalWrite(9,a);
+  digitalWrite(9,a);//pin y estado del pin
   digitalWrite(10,b);
   digitalWrite(4,c);
   digitalWrite(5,d);
@@ -170,3 +120,63 @@ void visualizacion(int num)
   }
 }
 
+void subirMontacargas()
+{
+   nivel++;
+             
+        if (nivel > 9)//cuando nivel supere nueve
+        {
+          nivel = 9;
+          visualizacion(nivel);
+          Serial.println("Solo se puede subir hasta 9");
+        }
+        else
+        {
+           visualizacion(nivel);//dibuja el num
+           digitalWrite(LED_VERDE, HIGH); //encender led
+           Serial.print("Montacargas en el piso:");
+           Serial.println(nivel);
+           delay(3000);//3seg
+           display(0,0,0,0,0,0,0);//apago segmentos
+           digitalWrite(LED_VERDE, LOW);//apago led
+        }
+}
+
+void bajarMontacargas()
+{
+   nivel--;
+        if (nivel < 0)//cuando el valor del nivel sea menor que cero
+        {
+          nivel = 0;
+          visualizacion(nivel);
+          Serial.println("Solo se puede bajar hasta 0");
+        }
+        else
+        {
+           visualizacion(nivel);
+           digitalWrite(LED_VERDE, HIGH); 
+           Serial.print("Montacargas en el piso:");
+           Serial.println(nivel); 
+           delay(3000);//3seg
+           display(0,0,0,0,0,0,0);//apago segmentos
+           digitalWrite(LED_VERDE, LOW);//apago led
+        }
+}
+
+void pausarMontacargas(int estadoDelLed)
+{
+      if(estadoDelLed == 1)
+        {
+          digitalWrite(LED_ROJO,HIGH);
+          Serial.println("Montacargas en pausa...");
+          Serial.print("Pausado en el piso: ");
+          Serial.println(nivel);
+          flagPausa = TRUE;//bandera cambia si esta en pausa
+        }
+        else // si el valor es 0
+        {
+          digitalWrite(LED_ROJO,LOW);
+          Serial.println("Montacargas activo! :D");
+          flagPausa = FALSE;
+        }
+}
