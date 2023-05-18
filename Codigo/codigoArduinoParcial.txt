@@ -1,0 +1,172 @@
+// C++ code
+//
+#define A 9
+#define B 10
+#define F 8
+#define G 7
+#define E 6
+#define D 5
+#define C 4
+#define PULSADOR_BAJAR 13
+#define PULSADOR_PAUSAR 12
+#define PULSADOR_SUBIR 11
+#define LED_VERDE 2
+#define LED_ROJO 3
+#define TRUE  1
+#define FALSE 0
+
+int estadoBotonSubir;
+int estadoAnteriorBotonSubir = 0;
+
+int estadoBotonBajar;
+int estadoAnteriorBotonBajar = 0;
+
+int estadoBotonPausar = 0;
+int estadoAnteriorBotonPausar = 0;
+int estadoDelLed = 0;
+
+
+int elementos[] = {2,3,4,5,6,7,8,9,10};
+int pulsadores[] = {11,12,13};
+int nivel = 0;
+int flagPausa = FALSE;
+
+void setup()
+{
+  for(int i= 0;i<9;i++)
+  {
+    pinMode(elementos[i], OUTPUT);  
+  }
+  
+  for(int i= 0;i<4;i++)
+  {
+    pinMode(pulsadores[i],INPUT);  
+  }
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  //BOTON SUBIR
+  estadoBotonSubir = digitalRead(PULSADOR_SUBIR);
+  
+  if (estadoBotonSubir!=estadoAnteriorBotonSubir)
+  {
+  	if (estadoBotonSubir == HIGH && flagPausa == FALSE)
+  	{
+         nivel++;
+             
+        if (nivel > 9)
+        {
+          nivel = 9;
+          visualizacion(nivel);
+          Serial.println("Solo se puede subir hasta 9");
+        }
+        else
+        {
+           visualizacion(nivel);
+           digitalWrite(LED_VERDE, HIGH); 
+           delay(3000);
+           Serial.print("Montacargas en el piso:");
+           Serial.println(nivel); 
+           display(0,0,0,0,0,0,0);
+           digitalWrite(LED_VERDE, LOW);
+        }
+ 	}
+    
+    estadoAnteriorBotonSubir = estadoBotonSubir;
+  }
+  
+  //BOTON BAJAR
+  estadoBotonBajar = digitalRead(PULSADOR_BAJAR);
+  
+  if (estadoBotonBajar!=estadoAnteriorBotonBajar)
+  {
+  
+  	if (estadoBotonBajar == HIGH && flagPausa == FALSE)
+  	{
+         nivel--;
+        if (nivel < 0)
+        {
+          nivel = 0;
+          visualizacion(nivel);
+          Serial.println("Solo se puede bajar hasta 0");
+        }
+        else
+        {
+           visualizacion(nivel);
+           digitalWrite(LED_VERDE, HIGH); 
+           delay(3000);
+           Serial.print("Montacargas en el piso:");
+           Serial.println(nivel); 
+           display(0,0,0,0,0,0,0);
+           digitalWrite(LED_VERDE, LOW);
+        }
+ 	}
+    
+    estadoAnteriorBotonBajar= estadoBotonBajar;
+  } 
+  
+  
+  //BOTON PAUSAR
+  estadoBotonPausar = digitalRead(PULSADOR_PAUSAR);
+    
+  	if ((estadoBotonPausar == HIGH) &&(estadoAnteriorBotonPausar == LOW))
+  	{
+        estadoDelLed = 1 - estadoDelLed;
+        delay(10); 
+ 	}
+    if(estadoDelLed == 1)
+    {
+      digitalWrite(LED_ROJO,HIGH);
+      Serial.println("Montacargas en pausa...");
+      flagPausa = TRUE;
+    }
+    else
+    {
+      digitalWrite(LED_ROJO,LOW);
+      Serial.println("Montacargas activo de nuevo...");
+      flagPausa = FALSE;
+    }
+    estadoAnteriorBotonPausar= estadoBotonPausar;
+  
+  
+} 
+
+void display(int a,int b,int c,int d,int e,int f,int g)
+{
+  digitalWrite(9,a);
+  digitalWrite(10,b);
+  digitalWrite(4,c);
+  digitalWrite(5,d);
+  digitalWrite(6,e);
+  digitalWrite(8,f);
+  digitalWrite(7,g);
+}
+void visualizacion(int num)
+{
+  switch(num)
+  {
+    case 0: display(1,1,1,1,1,1,0);
+    	break;
+    case 1: display(0,1,1,0,0,0,0);
+        break;
+    case 2:display(1,1,0,1,1,0,1);
+    	break;
+    case 3:display(1,1,1,1,0,0,1);
+    	break;
+    case 4:display(0,1,1,0,0,1,1);
+    	break;
+    case 5:display(1,0,1,1,0,1,1);
+    	break;
+    case 6:display(1,0,1,1,1,1,1);
+    	break;
+    case 7:display(1,1,1,0,0,0,0);
+    	break;
+     case 8:display(1,1,1,1,1,1,1);
+    	break;
+     case 9:display(1,1,1,1,0,1,1);
+    	break;
+  }
+}
+
