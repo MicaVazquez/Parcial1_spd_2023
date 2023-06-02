@@ -112,122 +112,20 @@ void loop()
 <h2> Funciones </h2>
 <ul>
 <li>La función display() se utiliza para controlar los segmentos del display de siete segmentos. Recibe como argumentos los valores de los segmentos (0 o 1) y utiliza la función digitalWrite() para establecer los valores correspondientes en los pines de los segmentos.</li>
-```bash
-void display(int a,int b,int c,int d,int e,int f,int g)//recibe el estado de cada segmento
-{
-  digitalWrite(9,a);//pin y estado del pin
-  digitalWrite(10,b);
-  digitalWrite(4,c);
-  digitalWrite(5,d);
-  digitalWrite(6,e);
-  digitalWrite(8,f);
-  digitalWrite(7,g);
-}
-```
+
 <li>La función visualizacion() recibe un número como argumento y muestra ese número en el display de siete segmentos llamando a la función display() con los valores de segmentos correspondientes al número.</li>
-```bash
-void visualizacion(int num)
-{
-  switch(num)
-  {
-    case 0: display(1,1,1,1,1,1,0);
-    	break;
-    case 1: display(0,1,1,0,0,0,0);
-        break;
-    case 2:display(1,1,0,1,1,0,1);
-    	break;
-    case 3:display(1,1,1,1,0,0,1);
-    	break;
-    case 4:display(0,1,1,0,0,1,1);
-    	break;
-    case 5:display(1,0,1,1,0,1,1);
-    	break;
-    case 6:display(1,0,1,1,1,1,1);
-    	break;
-    case 7:display(1,1,1,0,0,0,0);
-    	break;
-     case 8:display(1,1,1,1,1,1,1);
-    	break;
-     case 9:display(1,1,1,1,0,1,1);
-    	break;
-  }
-}
-```
+
 <li>void subirMontacargas(): Esta función se encarga de subir el montacargas al siguiente nivel. Incrementa la variable nivel en uno y luego verifica si el nivel supera el valor máximo permitido (9). Si es así, establece nivel en 9, muestra el número 9 en el display llamando a la función visualizacion(), imprime un mensaje en la comunicación serial indicando que solo se puede subir hasta el nivel 9. En caso contrario, muestra el número actual del nivel en el display, enciende el LED verde utilizando digitalWrite(), imprime el número del nivel actual en la comunicación serial, espera 3 segundos utilizando delay(), apaga los segmentos del display llamando a display() con valores de segmento apagados, y finalmente apaga el LED verde.</li>
-  ```bash
-void subirMontacargas()
-{
-   nivel++;
-             
-        if (nivel > 9)//cuando nivel supere nueve
-        {
-          nivel = 9;
-          visualizacion(nivel);
-          Serial.println("Solo se puede subir hasta 9");
-        }
-        else
-        {
-           visualizacion(nivel);//dibuja el num
-           digitalWrite(LED_VERDE, HIGH); //encender led
-           Serial.print("Montacargas en el piso:");
-           Serial.println(nivel);
-           delay(3000);//3seg
-           display(0,0,0,0,0,0,0);//apago segmentos
-           digitalWrite(LED_VERDE, LOW);//apago led
-        }
-}
-```
+ 
 <li>void bajarMontacargas(): Esta función se encarga de bajar el montacargas al nivel anterior. Decrementa la variable nivel en uno y luego verifica si el nivel es menor que cero. Si es así, establece nivel en 0, muestra el número 0 en el display llamando a la función visualizacion(), e imprime un mensaje en la comunicación serial indicando que solo se puede bajar hasta el nivel 0. En caso contrario, muestra el número actual del nivel en el display, enciende el LED verde utilizando digitalWrite(), imprime el número del nivel actual en la comunicación serial, espera 3 segundos utilizando delay(), apaga los segmentos del display llamando a display() con valores de segmento apagados, y finalmente apaga el LED verde.</li><br>
 <img src="./Img/LedVerde.png" ><br>
   
-```bash
-  void bajarMontacargas()
-{
-   nivel--;
-        if (nivel < 0)//cuando el valor del nivel sea menor que cero
-        {
-          nivel = 0;
-          visualizacion(nivel);
-          Serial.println("Solo se puede bajar hasta 0");
-        }
-        else
-        {
-           visualizacion(nivel);
-           digitalWrite(LED_VERDE, HIGH); 
-           Serial.print("Montacargas en el piso:");
-           Serial.println(nivel); 
-           delay(3000);//3seg
-           display(0,0,0,0,0,0,0);//apago segmentos
-           digitalWrite(LED_VERDE, LOW);//apago led
-        }
-}
 
-
-```
   
   <p>Así se ve cuando se encuentra en movimiento</p>
 <li>void pausarMontacargas(int estadoDelLed): Esta función se encarga de pausar o reanudar el montacargas. Recibe el estado del LED rojo como argumento (estadoDelLed). Si estadoDelLed es igual a 1, se enciende el LED rojo utilizando digitalWrite(), se imprime un mensaje en la comunicación serial indicando que el montacargas está en pausa, y se establece flagPausa en TRUE. Si estadoDelLed es diferente de 1, se apaga el LED rojo, se imprime un mensaje en la comunicación serial indicando que el montacargas está activo, y se establece flagPausa en FALSE. Esta variable flagPausa se utiliza para controlar si se permite o no el movimiento del montacargas en las funciones de subir y bajar, evitando que se mueva mientras está en pausa.</li><br>
 <img src="./Img/LedRojo.png" ><br>
-  ```bash
-  void pausarMontacargas(int estadoDelLed)
-{
-      if(estadoDelLed == 1)
-        {
-          digitalWrite(LED_ROJO,HIGH);
-          Serial.println("Montacargas en pausa...");
-          Serial.print("Pausado en el piso: ");
-          Serial.println(nivel);
-          flagPausa = TRUE;//bandera cambia si esta en pausa
-        }
-        else // si el valor es 0
-        {
-          digitalWrite(LED_ROJO,LOW);
-          Serial.println("Montacargas activo! :D");
-          flagPausa = FALSE;
-        }
-}
 
-```
   <p>Así se ve cuando se encuentra pausado</p>
 </ul>
 <h2> Link del proyecto </h2>
